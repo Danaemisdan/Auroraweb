@@ -1,26 +1,210 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+@theme {
+  --color-background: #000000;
+  --color-foreground: #ffffff;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-aurora-1: #6E56FF;
+  --color-aurora-2: #43B9FF;
+  --color-aurora-3: #43FFD2;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Hide Next.js dev indicator */
+[data-nextjs-dialog-overlay],
+[data-nextjs-toast],
+nextjs-portal {
+  display: none !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@theme inline {
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+    outline-color: color-mix(in oklch, var(--ring) 50%, transparent);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+}
+
+/* Animated flowing metallic gradient for AURORA hero text */
+.aurora-gradient-flow {
+  background-image: linear-gradient(110deg,
+      #ffffff 0%,
+      #8b5cf6 15%,
+      #c850c0 25%,
+      #ff6b35 40%,
+      #f7c59f 55%,
+      #ffffff 70%,
+      #8b5cf6 85%,
+      #c850c0 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: aurora-flow 4s ease-in-out infinite;
+}
+
+@keyframes aurora-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ══ Download button glow ring on hover ══ */
+.aurora-download-btn {
+  position: relative;
+  overflow: visible;
+}
+
+.aurora-glow-ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: 9999px;
+  background: linear-gradient(110deg, #8b5cf6, #c850c0, #ff6b35, #f7c59f, #8b5cf6);
+  background-size: 300% 100%;
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.4s ease;
+  filter: blur(4px);
+  animation: aurora-flow-linear 2.5s linear infinite;
+}
+
+@keyframes aurora-flow-linear {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 300% 50%;
+  }
+}
+
+.aurora-download-btn:hover .aurora-glow-ring {
+  opacity: 1;
+}
+
+.aurora-download-btn:hover {
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+/* ══ Navbar button gradient hover ══ */
+.aurora-nav-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.aurora-nav-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, #8b5cf6, #c850c0, #ff6b35);
+  background-size: 200% 100%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: aurora-flow 3s ease-in-out infinite;
+}
+
+.aurora-nav-btn:hover::before {
+  opacity: 1;
+}
+
+.aurora-nav-btn:hover {
+  color: white;
+}
+
+.aurora-nav-btn>* {
+  position: relative;
+  z-index: 1;
+}
+
+/* ══ Footer logo animated glow ══ */
+.aurora-logo-glow {
+  position: relative;
+  display: inline-flex;
+}
+
+.aurora-logo-glow::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200, 80, 192, 0.15) 0%, rgba(139, 92, 246, 0.08) 40%, transparent 70%);
+  animation: logo-pulse 3s ease-in-out infinite;
+  z-index: -1;
+}
+
+@keyframes logo-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
 }
