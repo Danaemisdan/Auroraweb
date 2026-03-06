@@ -74,12 +74,38 @@ function AnimatedAuroraLogo({
   );
 }
 
+/* ═══════ MOCK DOWNLOAD ICON COMPONENT ═══════ */
+function DownloadIcon({ os, className = "w-5 h-5" }: { os: string; className?: string }) {
+  if (os === "windows") {
+    return (
+      <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M4 11.5V4l7.5-1v8.5H4zm8.5-8.5l8-1.1V11.5h-8V3zM4 12.5h7.5V21L4 20v-7.5zm8.5 0h8v8.6l-8-1.1v-7.5z" />
+      </svg>
+    );
+  }
+  if (os === "android") {
+    return (
+      <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.523 15.341c-.551 0-1-.448-1-.999 0-.55.449-.999 1-.999s1 .449 1 .999c0 .551-.449.999-1 .999m-11.046 0c-.551 0-1-.448-1-.999 0-.55.449-.999 1-.999.551 0 1 .449 1 .999 0 .551-.449.999-1 .999m11.437-7.252l1.649-2.854c.061-.106.024-.241-.082-.302-.106-.062-.24-.025-.303.08l-1.684 2.914C16.142 7.228 14.152 6.75 12 6.75c-2.152 0-4.142.478-5.494 1.178L4.821 5.014c-.061-.106-.195-.143-.301-.081-.107.062-.143.196-.083.302l1.648 2.854C2.536 9.539 0 13.978 0 19.25h24c0-5.272-2.536-9.711-6.084-11.161" />
+      </svg>
+    );
+  }
+  // Default to Apple for mac, ios, and others
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+    </svg>
+  );
+}
+
 /* ═══════ MINIMAL OS DETECTION ═══════ */
 function useOS() {
-  const [os, setOs] = useState<"mac" | "windows" | "linux" | "other">("other");
+  const [os, setOs] = useState<"mac" | "windows" | "linux" | "android" | "ios" | "other">("other");
   useEffect(() => {
     const ua = navigator.userAgent.toLowerCase();
-    if (ua.includes("mac")) setOs("mac");
+    if (ua.includes("android")) setOs("android");
+    else if (ua.includes("iphone") || ua.includes("ipad") || ua.includes("ipod")) setOs("ios");
+    else if (ua.includes("mac")) setOs("mac");
     else if (ua.includes("win")) setOs("windows");
     else if (ua.includes("linux")) setOs("linux");
   }, []);
@@ -144,13 +170,12 @@ export default function Home() {
   const browserMockupY = useTransform(browserScrollProgress, [0, 0.25, 0.5], ["200px", "200px", "0px"]);
 
   const dlLabel =
-    os === "mac"
-      ? "Download for macOS"
-      : os === "windows"
-        ? "Download for Windows"
-        : os === "linux"
-          ? "Download for Linux"
-          : "Download Engine";
+    os === "mac" ? "Download for macOS" :
+      os === "windows" ? "Download for Windows" :
+        os === "android" ? "Download for Android" :
+          os === "ios" ? "Download for iOS" :
+            os === "linux" ? "Download for Linux" :
+              "Download Engine";
 
   return (
     <>
@@ -218,9 +243,7 @@ export default function Home() {
 
             <button className="aurora-nav-btn h-8 px-4 rounded-full bg-white text-black text-[13px] font-bold transition-all duration-300 flex items-center gap-2">
               <span className="relative z-10 flex items-center gap-2">
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-                </svg>
+                <DownloadIcon os={os} className="w-3.5 h-3.5" />
                 {dlLabel}
               </span>
             </button>
@@ -249,7 +272,7 @@ export default function Home() {
             <h1
               className="aurora-gradient-flow text-transparent font-black tracking-tighter leading-[0.9] text-center uppercase w-full"
               style={{
-                fontSize: 'clamp(6rem, 22vw, 32rem)',
+                fontSize: 'clamp(3.5rem, 20vw, 32rem)',
               }}
             >
               AURORA
@@ -276,10 +299,7 @@ export default function Home() {
 
             {/* Download CTA with gradient glow on hover */}
             <button className="aurora-download-btn group relative bg-transparent border border-white/30 text-white px-8 py-4 rounded-full font-bold text-[15px] transition-all duration-500 hover:border-transparent flex items-center gap-2.5">
-              {/* Apple logo */}
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-              </svg>
+              <DownloadIcon os={os} className="w-5 h-5" />
               {dlLabel}
               {/* Gradient glow ring on hover */}
               <span className="aurora-glow-ring"></span>
@@ -337,8 +357,8 @@ export default function Home() {
                 <div className="w-3 h-3 rounded-full bg-[#28c840]" />
 
                 {/* Search Bar */}
-                <div className="absolute left-1/2 -translate-x-1/2 w-1/3 h-6 bg-white/[0.03] rounded-md border border-white/[0.05] flex items-center justify-center">
-                  <span className="text-[10px] text-zinc-600 font-mono tracking-wider">Search or enter protocol</span>
+                <div className="absolute left-1/2 -translate-x-1/2 w-[70%] md:w-1/3 h-6 bg-white/[0.03] rounded-md border border-white/[0.05] flex items-center justify-center overflow-hidden">
+                  <span className="text-[10px] text-zinc-600 font-mono tracking-wider truncate px-2">Search or enter protocol</span>
                 </div>
               </div>
 
@@ -346,10 +366,10 @@ export default function Home() {
               <div className="aspect-[16/9] w-full relative bg-zinc-950 flex flex-col items-center justify-center pt-10">
                 <AnimatedAuroraLogo className="w-20 h-20 opacity-20 mb-6" />
                 <div className="w-1/2 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                <div className="mt-8 grid grid-cols-3 gap-4 w-3/4 opacity-40">
-                  <div className="h-24 rounded-lg bg-white/5" />
-                  <div className="h-24 rounded-lg bg-white/5" />
-                  <div className="h-24 rounded-lg bg-white/5" />
+                <div className="mt-8 grid grid-cols-3 gap-2 md:gap-4 w-[90%] md:w-3/4 opacity-40">
+                  <div className="h-16 md:h-24 rounded-lg bg-white/5" />
+                  <div className="h-16 md:h-24 rounded-lg bg-white/5" />
+                  <div className="h-16 md:h-24 rounded-lg bg-white/5" />
                 </div>
               </div>
             </div>
@@ -357,7 +377,7 @@ export default function Home() {
         </section>
 
         {/* ═══ PRIVACY-FIRST: IT RUNS LOCALLY ═══ */}
-        <section className="py-32 px-6 md:px-20 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+        <section className="py-20 md:py-32 px-6 md:px-20 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -450,7 +470,7 @@ export default function Home() {
         </section>
 
         {/* ═══ EMBEDDED AGENTS — ANIMATED BEAM STYLE ═══ */}
-        <section className="py-32 px-6 md:px-20 max-w-7xl mx-auto flex flex-col md:flex-row gap-20 items-center border-t border-white/[0.05]">
+        <section className="py-20 md:py-32 px-6 md:px-20 max-w-7xl mx-auto flex flex-col md:flex-row gap-12 md:gap-20 items-center border-t border-white/[0.05]">
           {/* Left: Animated beam visualization */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -635,7 +655,7 @@ export default function Home() {
         </section>
 
         {/* ═══ FOOTER CTA (Clean Luma Style) ═══ */}
-        <section className="py-40 px-6 flex flex-col items-center text-center border-t border-white/[0.05]">
+        <section className="py-24 md:py-40 px-6 flex flex-col items-center text-center border-t border-white/[0.05]">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -647,13 +667,11 @@ export default function Home() {
               <AnimatedAuroraLogo className="w-32 h-32 md:w-40 md:h-40" useGradient={true} />
             </div>
           </motion.div>
-          <h2 className="text-5xl md:text-8xl font-black tracking-tighter mb-12">
+          <h2 className="text-4xl md:text-8xl font-black tracking-tighter mb-10 md:mb-12">
             TAKE BACK THE WEB.
           </h2>
-          <button className="aurora-download-btn group relative bg-transparent border border-white/30 text-white px-12 py-5 rounded-full font-bold text-lg transition-all duration-500 hover:border-transparent flex items-center gap-3">
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-            </svg>
+          <button className="aurora-download-btn group relative bg-transparent border border-white/30 text-white px-8 md:px-12 py-4 md:py-5 rounded-full font-bold text-base md:text-lg transition-all duration-500 hover:border-transparent flex items-center gap-3">
+            <DownloadIcon os={os} className="w-5 h-5" />
             {dlLabel}
             <span className="aurora-glow-ring"></span>
           </button>
